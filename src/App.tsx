@@ -1,8 +1,15 @@
+// App.tsx
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';  
+import { HomePage } from './HomePage';
 
-export function App() {
-
+export const App = () => {
   return (
-    <h1>Ola</h1>
-  )
-}
-
+    <div>
+      <Routes>
+        <Route path="/" element={<HomePage />} /> 
+        <Route path="/home" element={<HomePage />} />  
+      </Routes>
+    </div>
+  );
+};

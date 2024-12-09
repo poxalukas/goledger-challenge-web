@@ -132,8 +132,7 @@ export function AlbumHome() {
                             <button
                                 className="add-button"
                                 title="Adicionar novo Album"
-                                onClick={() => {}}
-                            >
+                                onClick={event =>  window.location.href='/albums/add'}                             >
                                 +
                             </button>
                         </div>

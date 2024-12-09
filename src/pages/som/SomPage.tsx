@@ -124,9 +124,6 @@ export function SomHome() {
         }
     };
 
-            const handleIncluir = () => {
-            navigate("/add");
-        };
 
     return (
         <>

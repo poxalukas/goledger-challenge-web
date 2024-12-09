@@ -133,8 +133,7 @@ export function ArtistHome() {
                             <button
                                 className="add-button"
                                 title="Adicionar novo Artista"
-                                onClick={() => {}}
-                            >
+                                onClick={event =>  window.location.href='/artist/add'}                             >
                                 +
                             </button>
                         </div>

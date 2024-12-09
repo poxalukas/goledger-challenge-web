@@ -90,14 +90,14 @@ export function PlayListHome() {
             setPlaylistToDelete(playlist);
             setShowDeleteModal(true);
         };
-        const handleVisualizarClick = () => {
+        const handleVisualizarClick = (song) => {
             localStorage.setItem("botaoAcessado", "visualizar");
             window.location.href = `/cadastrabalanca?id=${data.id}`;
         };
 
-        const handleEditarClick = () => {
-            localStorage.setItem("botaoAcessado", "editar");
+        const handleEditarClick = (song) => {
             window.location.href = `/cadastrabalanca?id=${data.id}`;
+
         };
 
         return (
@@ -107,14 +107,14 @@ export function PlayListHome() {
                     className="p-button"
                     rounded
                     text
-                    onClick={handleVisualizarClick}
+                    onClick={() =>handleVisualizarClick(data)}
                 />
                 <Button
                     icon="pi pi-pencil"
                     className="p-button"
                     rounded
                     text
-                    onClick={handleEditarClick}
+                    onClick={() =>handleEditarClick(data)}
                 />
                 <Button
                     icon="pi pi-trash"
@@ -143,8 +143,7 @@ export function PlayListHome() {
                             <button
                                 className="add-button"
                                 title="Adicionar nova Playlist"
-                                onClick={() => hand}
-                            >
+                                onClick={event =>  window.location.href='/playlists/add'}                            >
                                 +
                             </button>
                         </div>

@@ -91,12 +91,10 @@ export function PlayListHome() {
             setShowDeleteModal(true);
         };
         const handleVisualizarClick = (song) => {
-            localStorage.setItem("botaoAcessado", "visualizar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
+            window.location.href = `/playlists/add/playlist:7ae127d7-df48-53bc-8e13-f5b18cd893aa/v`;
         };
 
         const handleEditarClick = (song) => {
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
 
         };
 

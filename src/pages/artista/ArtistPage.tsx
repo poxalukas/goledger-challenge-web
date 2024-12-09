@@ -69,7 +69,6 @@ export function ArtistHome() {
 
         const handleEditarClick = (artista) => {
             localStorage.setItem("botaoAcessado", "editar");
-            window.location.href = `/cadastrabalanca?id=${artista.id}`;
         };
 
         return (

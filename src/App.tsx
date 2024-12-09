@@ -25,6 +25,7 @@ export const App = () => {
         <Route path="/musicas/add" element={<SomInclude />} />  
         <Route path="/playlists" element={<PlayListHome />} />  
         <Route path="/playlists/add" element={<PlaylistInclude />} />  
+        <Route path="/playlists/add/:id/:action" element={<PlaylistInclude />} />
       </Routes>
     </div>
   );

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import { listarTodosSons } from "../../services/musicaService";
 import "../../css/include.css";
 import { createSong } from "../../services/musicaService";
-import { createPlaylist } from "../../services/playlistService";
+import { createPlaylist, find } from "../../services/playlistService";
+import { useLocation, useParams } from "react-router-dom";
 
 export function PlaylistInclude() {
     const [songs, setSongs] = useState([]);
@@ -52,9 +53,9 @@ export function PlaylistInclude() {
             asset: [
                 {
                     "@assetType": "playlist",
-                    "name": playlistName,
-                    "private": isPrivate,
-                    "songs": selectedSongs.map((songId) => ({
+                    name: playlistName,
+                    private: isPrivate,
+                    songs: selectedSongs.map((songId) => ({
                         "@assetType": "song",
                         "@key": songId,
                     })),
@@ -73,7 +74,7 @@ export function PlaylistInclude() {
     };
 
     const handleBack = () => {
-        window.location.href = "/playlists"; 
+        window.location.href = "/playlists";
     };
 
     // Paginando as músicas
@@ -100,7 +101,10 @@ export function PlaylistInclude() {
                     </div>
 
                     <div className="input-group">
-                        <label htmlFor="playlist-privacy" className="checkbox-label">
+                        <label
+                            htmlFor="playlist-privacy"
+                            className="checkbox-label"
+                        >
                             Privada:
                         </label>
                         <input
@@ -131,7 +135,10 @@ export function PlaylistInclude() {
 
                     <div className="pagination w-full flex justify-between items-center mt-4">
                         <button
-                            onClick={() => paginate(currentPage - 1)}
+                           onClick={(event) => {
+                            event.preventDefault();
+                            paginate(currentPage - 1);
+                        }}
                             disabled={currentPage === 1}
                             className="bg-[#222222] text-white py-2 px-4 rounded disabled:opacity-50"
                         >
@@ -144,7 +151,10 @@ export function PlaylistInclude() {
                             }}
                         >{`Página ${currentPage} de ${totalPages}`}</span>
                         <button
-                            onClick={() => paginate(currentPage + 1)}
+                            onClick={(event) => {
+                                event.preventDefault(); 
+                                paginate(currentPage + 1);
+                            }}
                             disabled={currentPage === totalPages}
                             className="bg-[#222222] text-white py-2 px-4 rounded disabled:opacity-50"
                         >
@@ -159,10 +169,18 @@ export function PlaylistInclude() {
                     </span>
 
                     <div className="button-group">
-                        <button type="button" onClick={handleSave} className="save-button">
+                        <button
+                            type="button"
+                            onClick={handleSave}
+                            className="save-button"
+                        >
                             Salvar
                         </button>
-                        <button type="button" onClick={handleBack} className="back-button">
+                        <button
+                            type="button"
+                            onClick={handleBack}
+                            className="back-button"
+                        >
                             Voltar
                         </button>
                     </div>

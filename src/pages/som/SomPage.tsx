@@ -64,12 +64,10 @@ export function SomHome() {
     const actionTemplate = (data) => {
         const handleVisualizarClick = () => {
             localStorage.setItem("botaoAcessado", "visualizar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
         };
 
         const handleEditarClick = () => {
             localStorage.setItem("botaoAcessado", "editar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
         };
         const handleExcluirClick = (som) => {
             setSomToDelete(som);

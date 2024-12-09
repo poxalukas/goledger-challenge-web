@@ -141,7 +141,6 @@ export function ArtistHome() {
                         <Table>
                             <TableHeader>
                                 <TableHead>Nome</TableHead>
-                                <TableHead>Ações</TableHead>
                             </TableHeader>
                             <TableBody>
                                 {currentItems.map((artista, index) => (

@@ -140,7 +140,6 @@ export function AlbumHome() {
                         <Table>
                             <TableHeader>
                                 <TableHead>Nome</TableHead>
-                                <TableHead>Ações</TableHead>
                             </TableHeader>
                             <TableBody>
                                 {currentItems.map((album, index) => (

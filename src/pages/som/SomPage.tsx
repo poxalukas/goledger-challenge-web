@@ -14,8 +14,10 @@ import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import { deleteSong, excluirSom, listarTodosSons } from "../../services/musicaService";
 import { Dialog } from "primereact/dialog";
+import { useNavigate } from "react-router-dom";
 
 export function SomHome() {
+    const navigate = useNavigate();
     const [dataSom, setDataSom] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -74,6 +76,7 @@ export function SomHome() {
             setShowDeleteModal(true);
         };
 
+
         return (
             <div className="button-container">
                 <Button
@@ -121,6 +124,10 @@ export function SomHome() {
         }
     };
 
+            const handleIncluir = () => {
+            navigate("/add");
+        };
+
     return (
         <>
             <div className="flex justify-center">
@@ -137,7 +144,8 @@ export function SomHome() {
                             <button
                                 className="add-button"
                                 title="Adicionar nova Musica"
-                                onClick={() => hand}
+                                onClick={event =>  window.location.href='/musicas/add'}
+                            
                             >
                                 +
                             </button>
@@ -145,7 +153,6 @@ export function SomHome() {
                         <Table>
                             <TableHeader>
                                 <TableHead>Nome</TableHead>
-                                <TableHead>Ações</TableHead>
                             </TableHeader>
                             <TableBody>
                                 {currentItems.map((som, index) => (
@@ -237,3 +244,5 @@ export function SomHome() {
         </>
     );
 }
+
+

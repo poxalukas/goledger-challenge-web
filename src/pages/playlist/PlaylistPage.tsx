@@ -12,7 +12,8 @@ import {
 } from "../../components/ui/table";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
-import { listarTodasPlaylist } from "../../services/playlistService";
+import { deletePlaylist, listarTodasPlaylist } from "../../services/playlistService";
+import { Dialog } from "primereact/dialog";
 
 export function PlayListHome() {
     const [dataPlaylist, setDataPlaylist] = useState([]);
@@ -21,13 +22,15 @@ export function PlayListHome() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [playlistToDelete, setPlaylistToDelete] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const playslists = await listarTodasPlaylist();
-                setDataPlaylist(playslists);
-                setFilteredData(playslists);
+                const playlists = await listarTodasPlaylist();
+                setDataPlaylist(playlists);
+                setFilteredData(playlists);
             } catch (err) {
                 setError(err.message);
             }
@@ -56,7 +59,37 @@ export function PlayListHome() {
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
+    const handleCancelarExclusao = () => {
+        setShowDeleteModal(false);
+        setPlaylistToDelete(null);
+    };
+
+    const handleConfirmarExclusao = async () => {
+        try {
+            if (playlistToDelete) {
+				const playlistKey = playlistToDelete["@key"];
+                const playlistData = {
+                    key: {
+                        "@assetType": "playlist",
+                        "@key": playlistKey
+                    },
+                    cascade: true,
+                };
+                await deletePlaylist(playlistData);
+                setFilteredData(filteredData.filter((playlist) => playlist["@key"]  !== playlistKey));
+                setShowDeleteModal(false);
+            }
+        } catch (err) {
+            setError("Erro ao excluir o artista");
+        }
+    };
+
+
     const actionTemplate = (data) => {
+        const handleExcluirClick = (playlist) => {
+            setPlaylistToDelete(playlist);
+            setShowDeleteModal(true);
+        };
         const handleVisualizarClick = () => {
             localStorage.setItem("botaoAcessado", "visualizar");
             window.location.href = `/cadastrabalanca?id=${data.id}`;
@@ -70,18 +103,25 @@ export function PlayListHome() {
         return (
             <div className="button-container">
                 <Button
-                    icon="pi pi-pencil"
+                    icon="pi pi-eye"
                     className="p-button"
                     rounded
                     text
                     onClick={handleVisualizarClick}
                 />
                 <Button
-                    icon="pi pi-trash"
+                    icon="pi pi-pencil"
                     className="p-button"
                     rounded
                     text
                     onClick={handleEditarClick}
+                />
+                <Button
+                    icon="pi pi-trash"
+                    className="p-button"
+                    rounded
+                    text
+                    onClick={() => handleExcluirClick(data)}
                 />
             </div>
         );
@@ -155,6 +195,51 @@ export function PlayListHome() {
                     </div>
                 </div>
             </div>
+            <Dialog
+                visible={showDeleteModal}
+                onHide={handleCancelarExclusao}
+                header="Confirmação de Exclusão"
+                style={{
+                    backgroundColor: "#444444",
+                    width: "600px",
+                    height: "auto",
+                    padding: "20px",
+                    border: "2px solid #ffffff",
+                    color: "#fff",
+                    textAlign: "center",
+                    borderRadius: "10px",
+                }}
+                footer={
+                    <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
+                        <Button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            onClick={handleCancelarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                        <Button
+                            label="Confirmar"
+                            icon="pi pi-check"
+                            onClick={handleConfirmarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                    </div>
+                }
+            >
+                <p style={{ marginTop: "30px", marginBottom: "30px" }}>
+                    Tem certeza de que deseja excluir a playlist "{playlistToDelete ? playlistToDelete.name : ''}"?
+                </p>
+            </Dialog>
         </>
     );
 }

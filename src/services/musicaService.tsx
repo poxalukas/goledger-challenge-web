@@ -17,7 +17,7 @@ export async function listarTodosSons() {
   headers.set('Content-Type', 'application/json');
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(url+ '/query/search', {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(body),
@@ -45,3 +45,34 @@ export async function listarTodosSons() {
     throw new Error(err.message);
   }
 }
+
+
+
+export async function deleteSong(somData) {
+  const body = {
+      key: somData.key,
+      cascade: somData.cascade           
+  };
+
+  const headers = new Headers();
+  headers.set("Authorization", "Basic " + btoa(`${username}:${password}`));
+  headers.set("Content-Type", "application/json");
+
+  try {
+      const response = await fetch(url + '/invoke/deleteAsset', {
+          method: "DELETE", 
+          headers: headers,
+          body: JSON.stringify(body),  
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;  
+  } catch (err) {
+      throw new Error(err.message);
+  }
+}
+

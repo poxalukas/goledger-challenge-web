@@ -12,7 +12,8 @@ import {
 } from "../../components/ui/table";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
-import { listarTodosAlbuns } from "../../services/albumService";
+import { listarTodosAlbuns, excluirAlbum } from "../../services/albumService";
+import { Dialog } from "primereact/dialog";
 
 export function AlbumHome() {
     const [dataAlbum, setDataAlbum] = useState([]);
@@ -21,6 +22,8 @@ export function AlbumHome() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [albumToDelete, setAlbumToDelete] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -57,15 +60,12 @@ export function AlbumHome() {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     const actionTemplate = (data) => {
-        const handleVisualizarClick = () => {
-            localStorage.setItem("botaoAcessado", "visualizar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
+        const handleExcluirClick = (album) => {
+            setAlbumToDelete(album);
+            setShowDeleteModal(true);
         };
 
-        const handleEditarClick = () => {
-            localStorage.setItem("botaoAcessado", "editar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
-        };
+        const handleEditarClick = () => {};
 
         return (
             <div className="button-container">
@@ -74,17 +74,46 @@ export function AlbumHome() {
                     className="p-button"
                     rounded
                     text
-                    onClick={handleVisualizarClick}
+                    onClick={handleEditarClick}
                 />
                 <Button
                     icon="pi pi-trash"
                     className="p-button"
                     rounded
                     text
-                    onClick={handleEditarClick}
+                    onClick={() => handleExcluirClick(data)}
                 />
             </div>
         );
+    };
+
+    const handleConfirmarExclusao = async () => {
+        try {
+            if (albumToDelete) {
+                const albumKey = albumToDelete["@key"];
+                const albumData = {
+                    key: {
+                        "@assetType": "album",
+                        "@key": albumKey,
+                        name: albumToDelete.name,
+                        artist: albumToDelete.artist,
+                    },
+                    cascade: true,
+                };
+                await excluirAlbum(albumData);
+                setFilteredData(
+                    filteredData.filter((album) => album["@key"] !== albumKey)
+                );
+                setShowDeleteModal(false);
+            }
+        } catch (err) {
+            setError("Erro ao excluir o álbum");
+        }
+    };
+
+    const handleCancelarExclusao = () => {
+        setShowDeleteModal(false);
+        setAlbumToDelete(null);
     };
 
     return (
@@ -103,7 +132,7 @@ export function AlbumHome() {
                             <button
                                 className="add-button"
                                 title="Adicionar novo Album"
-                                onClick={() => hand}
+                                onClick={() => {}}
                             >
                                 +
                             </button>
@@ -155,6 +184,59 @@ export function AlbumHome() {
                     </div>
                 </div>
             </div>
+
+            <Dialog
+                visible={showDeleteModal}
+                onHide={handleCancelarExclusao}
+                header="Confirmação de Exclusão"
+                style={{
+                    backgroundColor: "#444444",
+                    width: "600px",
+                    height: "auto",
+                    padding: "20px",
+                    border: "2px solid #ffffff",
+                    color: "#fff",
+                    textAlign: "center",
+                    borderRadius: "10px",
+                }}
+                footer={
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: "20px",
+                        }}
+                    >
+                        <Button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            onClick={handleCancelarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                        <Button
+                            label="Confirmar"
+                            icon="pi pi-check"
+                            onClick={handleConfirmarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                    </div>
+                }
+            >
+                <p style={{ marginTop: "30px", marginBottom: "30px" }}>
+                    Tem certeza de que deseja excluir o álbum "
+                    {albumToDelete ? albumToDelete.name : ""}"?
+                </p>
+            </Dialog>
         </>
     );
 }

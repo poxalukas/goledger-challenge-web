@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../../css/sidebar.css";
-import { listarTodosArtistas } from "../../services/artistaService";
+import { excluirArtista, listarTodosArtistas } from "../../services/artistaService";
 import {
     Table,
     TableBody,
@@ -13,6 +13,8 @@ import {
 } from "../../components/ui/table";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
+import { Dialog } from "primereact/dialog";
+import { excluirAlbum } from "../../services/albumService";
 
 export function ArtistHome() {
     const [dataArtista, setDataArtista] = useState([]);
@@ -21,6 +23,8 @@ export function ArtistHome() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [artistToDelete, setArtistToDelete] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -57,14 +61,15 @@ export function ArtistHome() {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     const actionTemplate = (data) => {
-        const handleVisualizarClick = () => {
-            localStorage.setItem("botaoAcessado", "visualizar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
+        const handleExcluirClick = () => {
+			console.log(data)
+            setArtistToDelete(data);
+            setShowDeleteModal(true);
         };
 
-        const handleEditarClick = () => {
+        const handleEditarClick = (artista) => {
             localStorage.setItem("botaoAcessado", "editar");
-            window.location.href = `/cadastrabalanca?id=${data.id}`;
+            window.location.href = `/cadastrabalanca?id=${artista.id}`;
         };
 
         return (
@@ -74,17 +79,42 @@ export function ArtistHome() {
                     className="p-button"
                     rounded
                     text
-                    onClick={handleVisualizarClick}
+                    onClick={() => handleEditarClick(data)}
                 />
                 <Button
                     icon="pi pi-trash"
                     className="p-button"
                     rounded
                     text
-                    onClick={handleEditarClick}
+                    onClick={() => handleExcluirClick()}
                 />
             </div>
         );
+    };
+
+    const handleConfirmarExclusao = async () => {
+        try {
+            if (artistToDelete) {
+				const artistKey = artistToDelete["@key"];
+                const artistData = {
+                    key: {
+                        "@assetType": "artist",
+                        "@key": artistKey
+                    },
+                    cascade: true,
+                };
+                await excluirArtista(artistData);
+                setFilteredData(filteredData.filter((artist) => artist["@key"]  !== artistKey));
+                setShowDeleteModal(false);
+            }
+        } catch (err) {
+            setError("Erro ao excluir o artista");
+        }
+    };
+
+    const handleCancelarExclusao = () => {
+        setShowDeleteModal(false);
+		setArtistToDelete(null);
     };
 
     return (
@@ -103,7 +133,7 @@ export function ArtistHome() {
                             <button
                                 className="add-button"
                                 title="Adicionar novo Artista"
-                                onClick={() => hand}
+                                onClick={() => {}}
                             >
                                 +
                             </button>
@@ -155,6 +185,52 @@ export function ArtistHome() {
                     </div>
                 </div>
             </div>
+
+            <Dialog
+                visible={showDeleteModal}
+                onHide={handleCancelarExclusao}
+                header="Confirmação de Exclusão"
+                style={{
+                    backgroundColor: "#444444",
+                    width: "600px",
+                    height: "auto",
+                    padding: "20px",
+                    border: "2px solid #ffffff",
+                    color: "#fff",
+                    textAlign: "center",
+                    borderRadius: "10px", 
+                }}
+                footer={
+                    <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
+                        <Button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            onClick={handleCancelarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                        <Button
+                            label="Confirmar"
+                            icon="pi pi-check"
+                            onClick={handleConfirmarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                    </div>
+                }
+            >
+                <p style={{ marginTop: "30px", marginBottom: "30px" }}>
+                    Tem certeza de que deseja excluir o artista "{artistToDelete ? artistToDelete.name : ''}"?
+                </p>
+            </Dialog>
         </>
     );
 }

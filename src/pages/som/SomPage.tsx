@@ -12,7 +12,8 @@ import {
 } from "../../components/ui/table";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
-import { listarTodosSons } from "../../services/musicaService";
+import { deleteSong, excluirSom, listarTodosSons } from "../../services/musicaService";
+import { Dialog } from "primereact/dialog";
 
 export function SomHome() {
     const [dataSom, setDataSom] = useState([]);
@@ -21,6 +22,8 @@ export function SomHome() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [somToDelete, setSomToDelete] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -66,6 +69,10 @@ export function SomHome() {
             localStorage.setItem("botaoAcessado", "editar");
             window.location.href = `/cadastrabalanca?id=${data.id}`;
         };
+        const handleExcluirClick = (som) => {
+            setSomToDelete(som);
+            setShowDeleteModal(true);
+        };
 
         return (
             <div className="button-container">
@@ -81,10 +88,37 @@ export function SomHome() {
                     className="p-button"
                     rounded
                     text
-                    onClick={handleEditarClick}
+                    onClick={() => handleExcluirClick(data)}
                 />
             </div>
         );
+    };
+
+    const handleCancelarExclusao = () => {
+        setShowDeleteModal(false);
+        setSomToDelete(null);
+    };
+
+    const handleConfirmarExclusao = async () => {
+        try {
+            if (somToDelete) {
+                const songKey = somToDelete["@key"];
+                const songData = {
+                    key: {
+                        "@assetType": "song",
+                        "@key": songKey
+                    },
+                    cascade: true,
+                };
+                await deleteSong(songData);
+                setFilteredData(
+                    filteredData.filter((song) => song["@key"] !== songKey)
+                );
+                setShowDeleteModal(false);
+            }
+        } catch (err) {
+            setError("Erro ao excluir o som");
+        }
     };
 
     return (
@@ -155,6 +189,51 @@ export function SomHome() {
                     </div>
                 </div>
             </div>
+            <Dialog
+                visible={showDeleteModal}
+                onHide={handleCancelarExclusao}
+                header="Confirmação de Exclusão"
+                style={{
+                    backgroundColor: "#444444",
+                    width: "600px",
+                    height: "auto",
+                    padding: "20px",
+                    border: "2px solid #ffffff",
+                    color: "#fff",
+                    textAlign: "center",
+                    borderRadius: "10px",
+                }}
+                footer={
+                    <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
+                        <Button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            onClick={handleCancelarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                        <Button
+                            label="Confirmar"
+                            icon="pi pi-check"
+                            onClick={handleConfirmarExclusao}
+                            className="p-button-outlined p-button-text"
+                            style={{
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                padding: "10px 20px",
+                            }}
+                        />
+                    </div>
+                }
+            >
+                <p style={{ marginTop: "30px", marginBottom: "30px" }}>
+                    Tem certeza de que deseja excluir o som "{somToDelete ? somToDelete.name : ''}"?
+                </p>
+            </Dialog>
         </>
     );
 }

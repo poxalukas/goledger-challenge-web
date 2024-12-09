@@ -58,7 +58,7 @@ export function AlbumInclude() {
 
         await createSong(payload)
             .then(() => {
-                window.location.href = "/musicas";
+                window.location.href = "/albums";
             })
             .catch((err) => {
                 console.error("Erro:", err.message);
@@ -66,7 +66,7 @@ export function AlbumInclude() {
     };
 
     const handleBack = () => {
-        window.location.href = "/musicas"; 
+        window.location.href = "/albums"; 
     };
 
     return (

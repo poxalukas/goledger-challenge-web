@@ -37,7 +37,7 @@ export function ArtistInclude() {
         await createArtist(payload)
             .then(() => {
                 console.log("Song criado com sucesso!");
-                window.location.href = "/musicas";
+                window.location.href = "/artist";
             })
             .catch((err) => {
                 console.error("Erro:", err.message);
@@ -46,7 +46,7 @@ export function ArtistInclude() {
     
 
     const handleBack = () => {
-        window.location.href = "/musicas"; 
+        window.location.href = "/artist"; 
     };
 
     return (

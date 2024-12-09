@@ -65,7 +65,7 @@ export function PlaylistInclude() {
         await createPlaylist(payload)
             .then(() => {
                 console.log("Playlist criada com sucesso!");
-                window.location.href = "/musicas";
+                window.location.href = "/playlists";
             })
             .catch((err) => {
                 console.error("Erro:", err.message);
@@ -73,7 +73,7 @@ export function PlaylistInclude() {
     };
 
     const handleBack = () => {
-        window.location.href = "/musicas"; 
+        window.location.href = "/playlists"; 
     };
 
     // Paginando as músicas

@@ -1,7 +1,10 @@
 import React from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import Slider from "react-slick"; // Presumo que você esteja usando o react-slick
 
-export const Carrossel = ({ title, data }) => {
+export const Carrossel = ({ title, data, route }) => {
+  const navigate = useNavigate();
+
     const sliderSettings = {
         dots: true,
         infinite: true,
@@ -32,42 +35,45 @@ export const Carrossel = ({ title, data }) => {
             },
         ],
     };
-  return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <div style={{ width: "70%" }}>
-        <h1>{title}</h1>
-        <Slider {...sliderSettings}>
-          {data.map((item, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ width: "70%" }}>
+          <h1>{title}</h1>
+          <Slider {...sliderSettings}>
+            {data.map((item, index) => (
               <div
+                key={index}
                 style={{
-                  width: "10vw",
-                  height: "10vw",
-                  borderRadius: title === "Artistas" ? "50%" : "15px", 
-                  backgroundColor: "#10082665",
-                  color: "#fff",
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "17px",
-                  textAlign: "center",
-                  margin: "10px",
-                  boxShadow: title === "Albuns" ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "none", 
                 }}
               >
-                {item?.name}
+                <button
+                  onClick={() => navigate(route)} 
+                  style={{
+                    width: "10vw",
+                    height: "10vw",
+                    borderRadius: title === "Artistas" ? "50%" : "15px",
+                    backgroundColor: "#10082665",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "17px",
+                    textAlign: "center",
+                    margin: "10px",
+                    border: "none",
+                    cursor: "pointer",
+                    boxShadow: title === "Albuns" ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "none",
+                  }}
+                >
+                  {item?.name}
+                </button>
               </div>
-            </div>
-          ))}
-        </Slider>
+            ))}
+          </Slider>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 

@@ -45,3 +45,64 @@ export async function listarTodasPlaylist() {
     throw new Error(err.message);
   }
 }
+
+//{
+  //     "asset": [
+  //       {
+  //         "@assetType": "album",
+  //         "name": "Luka'Album",
+  //         "year": 2022,
+  //         "artist": {
+  //           "@assetType": "artist",
+  //           "@key": "artist:713a43ae-8caf-5553-9871-6e62b00b4ae0"
+  //         }
+  //       }
+  //     ]
+  //   }
+  //   dados para album
+  
+  
+  // {
+  //     "asset": [
+  //       {
+  //         "@assetType": "artist",
+  //         "name": "Luka'Album",
+  //         "country": "Brazil"
+  //       }
+  //     ]
+  //   }
+    
+  
+  
+  // {
+  //     "asset": [
+  //       {
+  //         "@assetType": "playlist",
+  //         "name": "my playlist",
+  //         "songs": [
+  //           {
+  //             "@assetType": "song",
+  //             "@key": "song:1f37f761-980e-5bca-8986-abf8990fe8d3"
+  //           }
+  //        ],
+  //         "private": true
+    
+  //       }
+  //     ]
+  //   }
+    
+  
+  //
+  
+  // {
+  //     "asset": [
+  //       {
+  //         "@assetType": "song",
+  //         "name": "my song",
+  //         "album": {
+  //           "@assetType": "album",
+  //           "@key": "album:b3cc9dd9-e083-51f9-bef6-f332417db414"
+  //         }
+  //       }
+  //     ]
+  //   }
